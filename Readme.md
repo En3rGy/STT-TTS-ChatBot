@@ -22,7 +22,7 @@ This repository contains a voice-activated chatbot that utilizes the Vosk and Op
 1. Clone this repository
 2. Install the required dependencies:<br>`pip install vosk pyaudio pyttsx3 openai`
 3. Create a credentials file at `./etc/credentials.txt` and add your open ai API key to <br>`{"openai_api": OPEN_AI_API_KEY}`.
-4. Store the voks [https://alphacephei.com/vosk/models](model) at `./etc/models` and set the path as value of `MODEL_PATH` in stt.py
+4. Store the voks [model](https://alphacephei.com/vosk/models) at `./etc/models` and set the path as value of `MODEL_PATH` in stt.py
 5. Check the constants in stt.py
 
 ## Usage
