@@ -13,13 +13,14 @@ from vosk import Model, KaldiRecognizer
 
 # Constants
 TRIGGER_PHRASE = "hey computer"
+QUIT_TRIGGER_PHRASE = "ende"
+
 # MODEL_PATH = "../etc/models/vosk-model-de-0.21"
 MODEL_PATH = "../etc/models/vosk-model-small-de-0.15"
 WAITING_FOR_TRIGGER_SOUND = "../etc/sound/recoListening.wav"
 TRIGGER_DETECTED_SOUND = "../etc/sound/recoSuccess.wav"
 QUIT_SOUND = "../etc/sound/recoSleep.wav"
 CREDENTIALS_PATH = "../etc/credentials.txt"
-QUIT_TRIGGER_PHRASE = "ende"
 
 
 SAMPLE_RATE = 16000
@@ -43,18 +44,19 @@ def ask_ai(prompt: str, key: str) -> str:
     """
     openai.api_key = key
 
-    response = openai.Completion.create(
-        engine="text-davinci-002",
-        # messages=[{"role": "user", "content": prompt}],
-        prompt=f"Fasse dich kurz: {prompt}",
-        temperature=0.1,
-        n=1,
+    response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        # engine="text-davinci-002",
+        messages=[{"role": "user", "content": f"Fasse dich kurz: {prompt}"}],
+        # prompt=f"Fasse dich kurz: {prompt}",
+        temperature=0.3,
+        # n=1,
         max_tokens=300,
-        frequency_penalty=0.5,
-        presence_penalty=0.5
+        # frequency_penalty=0.5,
+        # presence_penalty=0.5
     )
 
-    return str(response.choices[0].text)
+    return str(response.choices[0].message.content)
 
 
 def play_wav(filename):
