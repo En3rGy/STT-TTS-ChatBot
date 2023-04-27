@@ -4,6 +4,7 @@ import time
 import json
 import wave
 import logging
+from typing import List, Dict
 
 import pyaudio
 import pyttsx4
@@ -33,30 +34,45 @@ logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(
 logger = logging.getLogger(__name__)
 
 
-def ask_ai(prompt: str, key: str) -> str:
-    """
-    @brief Generates a response from an AI model for the given prompt using the OpenAI API.
+class AskAi:
+    def __init__(self, api_key: str):
+        openai.api_key = api_key
+        self.msg_history: List[Dict[str, str]] = []
 
-    @param prompt: The prompt or question for which the AI should generate a response.
-    @param key: The API key to authenticate with the OpenAI API.
+    def reset_chat(self):
+        self.msg_history.clear()
 
-    @return The AI-generated response as a string.
-    """
-    openai.api_key = key
+    def ask_ai(self, prompt: str) -> str:
+        """
+        @brief Generates a response from an AI model for the given prompt using the OpenAI API.
 
-    response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",
-        # engine="text-davinci-002",
-        messages=[{"role": "user", "content": f"Fasse dich kurz: {prompt}"}],
-        # prompt=f"Fasse dich kurz: {prompt}",
-        temperature=0.3,
-        # n=1,
-        max_tokens=300,
-        # frequency_penalty=0.5,
-        # presence_penalty=0.5
-    )
+        @param prompt: The prompt or question for which the AI should generate a response.
 
-    return str(response.choices[0].message.content)
+        @return The AI-generated response as a string.
+
+        """
+        user_message = {"role": "user", "content": f"Fasse dich kurz: {prompt}"}
+
+        self.msg_history.append(user_message)
+
+        try:
+            response = openai.ChatCompletion.create(
+                model="gpt-3.5-turbo",
+                messages=self.msg_history,
+                temperature=0.3,
+                max_tokens=300
+            )
+
+            if "error" in response:
+                return str(response.error.message)
+
+            ai_message = response.choices[0].message
+            self.msg_history.append(ai_message)
+
+            return str(ai_message.content)
+
+        except openai.OpenAIError as e:
+            return str(e)
 
 
 def play_wav(filename):
@@ -154,6 +170,7 @@ def main() -> None:
         sys.exit(1)
 
     model = Model(MODEL_PATH)
+    ask_ai = AskAi(openai_key)
 
     recognizer = KaldiRecognizer(model, SAMPLE_RATE)
     tts_engine = pyttsx4.init()
@@ -184,13 +201,13 @@ def main() -> None:
                         is_active = False
                         break
                     elif stt_text.count(" ") > 2:
-                        reply = ask_ai(stt_text, openai_key).replace("\n", "")
+                        ai_reply = ask_ai.ask_ai(stt_text).replace("\n", "")
 
-                        logger.info(f"< {reply}")
-                        tts_engine.say(reply)
+                        logger.info(f"< {ai_reply}")
+                        tts_engine.say(ai_reply)
                         tts_engine.runAndWait()
-                        break
                 else:
+                    ask_ai.reset_chat()
                     break
 
             play_wav(WAITING_FOR_TRIGGER_SOUND)

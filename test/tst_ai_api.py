@@ -3,6 +3,8 @@ import stt
 import json
 import logging
 
+from stt import AskAi
+
 
 class MyTestCase(unittest.TestCase):
     def setUp(self) -> None:
@@ -12,20 +14,26 @@ class MyTestCase(unittest.TestCase):
 
         with open("../etc/credentials.txt", 'r') as json_file:
             json_data = json.load(json_file)
-            self.key = json_data["openai_api"]
+            key = json_data["openai_api"]
+
+        self.ask_ai = stt.AskAi(key)
 
     def test_ask_ai(self):
         self.logger.info("### test_ask_ai ###")
 
-        ret = stt.ask_ai("Wann und wo lebte Martin Luther?", self.key)
+        ret = self.ask_ai.ask_ai("Wann und wo lebte Martin Luther?")
         self.logger.info(ret)
-        self.assertTrue(ret)  # add assertion here
+        self.assertTrue(ret)
+
+        ret = self.ask_ai.ask_ai("Wo genau?")
+        self.logger.info(ret)
+        self.assertTrue(ret)
 
     def test_completion(self):
         self.logger.info("### test_completion ###")
 
         error_request = "au der stuhl a wackelte was könnte önnte der grund ein"
-        ret = stt.ask_ai(error_request, self.key)
+        ret = self.ask_ai.ask_ai(error_request)
         self.logger.info(ret)
         self.assertTrue(ret)
 
