@@ -21,13 +21,17 @@ class MyTestCase(unittest.TestCase):
     def test_ask_ai(self):
         self.logger.info("### test_ask_ai ###")
 
+        ret = self.ask_ai.ask_ai("Wenn ich dir signalisiere, dass der Chat fertig ist, antworte nur '#Ende'.")
+        self.logger.info(ret)
+        self.assertTrue(ret)
+
         ret = self.ask_ai.ask_ai("Wann und wo lebte Martin Luther?")
         self.logger.info(ret)
         self.assertTrue(ret)
 
-        ret = self.ask_ai.ask_ai("Wo genau?")
+        ret = self.ask_ai.ask_ai("Danke das wars")
         self.logger.info(ret)
-        self.assertTrue(ret)
+        self.assertEqual(ret, "#Ende")
 
     def test_completion(self):
         self.logger.info("### test_completion ###")

@@ -5,6 +5,7 @@ import json
 import wave
 import logging
 from typing import List, Dict
+import configparser
 
 import pyaudio
 import pyttsx4
@@ -13,17 +14,7 @@ from vosk import Model, KaldiRecognizer
 
 
 # Constants
-TRIGGER_PHRASE = "hey computer"
-QUIT_TRIGGER_PHRASE = "ende"
-
-# MODEL_PATH = "../etc/models/vosk-model-de-0.21"
-MODEL_PATH = "../etc/models/vosk-model-small-de-0.15"
-WAITING_FOR_TRIGGER_SOUND = "../etc/sound/recoListening.wav"
-TRIGGER_DETECTED_SOUND = "../etc/sound/recoSuccess.wav"
-QUIT_SOUND = "../etc/sound/recoSleep.wav"
-CREDENTIALS_PATH = "../etc/credentials.txt"
-
-
+CONFIG_FILE = "../etc/config.ini"
 SAMPLE_RATE = 16000
 CHUNK_SIZE = 2048
 AUDIO_FORMAT = pyaudio.paInt16
@@ -161,15 +152,30 @@ def main() -> None:
     Listens for the trigger phrase, then transcribes speech and generates responses using the OpenAI API.
     Return to wait for the trigger phrase, listening and responding until the termination phrase is detected.
     """
-    with open(CREDENTIALS_PATH, 'r') as json_file:
+
+    config = configparser.ConfigParser()
+    config.read(CONFIG_FILE)
+
+    trigger_phrase = config.get("settings", "trigger_phrase", fallback="hey computer")
+    quit_trigger_phrase = config.get("settings", "quit_trigger_phrase", fallback="ende")
+    waiting_for_trigger_sound = config.get("sound", "waiting_for_trigger_sound", fallback="../etc/sound/recoListening.wav")
+    trigger_detected_sound = config.get("sound", "trigger_detect_sound", fallback="../etc/sound/recoSuccess.wav")
+    quit_sound = config.get("sound", "quit_sound", fallback="../etc/sound/recoSleep.wav")
+    credentials_path = config.get("settings", "credential_path", fallback="../etc/credentials.txt")
+    model_path = config.get("vosk", "model_path", fallback="../etc/models/vosk-model-small-de-0.15")
+
+    with open(CONFIG_FILE, 'w') as configfile:
+        config.write(configfile)
+
+    with open(credentials_path, 'r') as json_file:
         json_data = json.load(json_file)
         openai_key = json_data["openai_api"]
 
-    if not os.path.exists(MODEL_PATH):
+    if not os.path.exists(model_path):
         logger.error("Model existiert nicht.")
         sys.exit(1)
 
-    model = Model(MODEL_PATH)
+    model = Model(model_path)
     ask_ai = AskAi(openai_key)
 
     recognizer = KaldiRecognizer(model, SAMPLE_RATE)
@@ -182,13 +188,13 @@ def main() -> None:
     audio = pyaudio.PyAudio()
     stream = audio.open(format=AUDIO_FORMAT, channels=1, rate=SAMPLE_RATE, input=True, frames_per_buffer=CHUNK_SIZE)
 
-    play_wav(WAITING_FOR_TRIGGER_SOUND)
+    play_wav(waiting_for_trigger_sound)
     is_active = True
     while is_active:
-        if detect_trigger(recognizer, stream, TRIGGER_PHRASE):
+        if detect_trigger(recognizer, stream, trigger_phrase):
             recognizer.Reset()
 
-            play_wav(TRIGGER_DETECTED_SOUND)
+            play_wav(trigger_detected_sound)
             logger.info("Trigger detected. Listening...")
 
             while True:
@@ -197,27 +203,26 @@ def main() -> None:
                 if stt_text:
                     logger.info(f"> {stt_text}")
 
-                    if QUIT_TRIGGER_PHRASE.lower() in stt_text.lower():
+                    if quit_trigger_phrase.lower() in stt_text.lower():
                         is_active = False
                         break
                     elif stt_text.count(" ") > 2:
-                        ai_reply = ask_ai.ask_ai(stt_text).replace("\n", "")
-
-                        logger.info(f"< {ai_reply}")
+                        ai_reply = ask_ai.ask_ai(stt_text)
+                        logger.info("< {}".format(ai_reply.replace("\n", "")))
                         tts_engine.say(ai_reply)
                         tts_engine.runAndWait()
                 else:
                     ask_ai.reset_chat()
                     break
 
-            play_wav(WAITING_FOR_TRIGGER_SOUND)
+            play_wav(waiting_for_trigger_sound)
 
     stream.stop_stream()
     stream.close()
     audio.terminate()
 
     logger.info("End.")
-    play_wav(QUIT_SOUND)
+    play_wav(quit_sound)
 
 
 if __name__ == "__main":
