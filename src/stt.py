@@ -1,25 +1,37 @@
 import sys
-import os
 import time
 import json
 import wave
 import logging
 from typing import List, Dict
 import configparser
+import os
 
 import pyaudio
-import pyttsx4
+import pyttsx3
+import pyttsx3.driver
+import pyttsx3.drivers.sapi5
 import openai
 from vosk import Model, KaldiRecognizer
 
 
+def resource_path(relative_path: str) -> str:
+    try:
+        # PyInstaller erstellt während der Ausführung einen tempor?ren Ordner, auf den diese Umgebungsvariable verweist
+        base_path = sys._MEIPASS
+    except Exception:
+        # Wenn die Anwendung nicht durch PyInstaller gebündelt ist, verwenden Sie den normalen relativen Pfad
+        base_path = os.path.dirname(os.path.abspath(__file__)) + "/.."
+
+    return os.path.join(base_path, relative_path)
+
+
 # Constants
-CONFIG_FILE = "../etc/config.ini"
+CONFIG_FILE = resource_path("etc/config.ini")
 SAMPLE_RATE = 16000
 CHUNK_SIZE = 2048
 AUDIO_FORMAT = pyaudio.paInt16
 TIMEOUT = 15
-
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
@@ -156,30 +168,54 @@ def main() -> None:
     config = configparser.ConfigParser()
     config.read(CONFIG_FILE)
 
+    credentials_path = resource_path(config.get("settings", "credential_path", fallback="etc/credentials.txt"))
     trigger_phrase = config.get("settings", "trigger_phrase", fallback="hey computer")
     quit_trigger_phrase = config.get("settings", "quit_trigger_phrase", fallback="ende")
-    waiting_for_trigger_sound = config.get("sound", "waiting_for_trigger_sound", fallback="../etc/sound/recoListening.wav")
-    trigger_detected_sound = config.get("sound", "trigger_detect_sound", fallback="../etc/sound/recoSuccess.wav")
-    quit_sound = config.get("sound", "quit_sound", fallback="../etc/sound/recoSleep.wav")
-    credentials_path = config.get("settings", "credential_path", fallback="../etc/credentials.txt")
-    model_path = config.get("vosk", "model_path", fallback="../etc/models/vosk-model-small-de-0.15")
+    waiting_for_trigger_sound = resource_path(config.get("sound", "waiting_for_trigger_sound",
+                                                         fallback="etc/sound/recoListening.wav"))
+    trigger_detected_sound = resource_path(config.get("sound", "trigger_detect_sound",
+                                                      fallback="etc/sound/recoSuccess.wav"))
+    quit_sound = resource_path(config.get("sound", "quit_sound", fallback="etc/sound/recoSleep.wav"))
+    model_path = resource_path(config.get("vosk", "model_path", fallback="etc/model/vosk-model-small-de-0.15"))
+    http_proxy = config.get("poxy", "http", fallback="")
+    https_proxy = config.get("proxy", "https", fallback="")
 
-    with open(CONFIG_FILE, 'w') as configfile:
-        config.write(configfile)
+    os.environ["HTTP_PROXY"] = http_proxy
+    os.environ["HTTPS_PROXY"] = https_proxy
+
+    if not os.path.exists(CONFIG_FILE):
+        config.add_section("settings")
+        config.set("settings", "trigger_phrase", trigger_phrase)
+        config.set("settings", "quit_trigger_phrase", quit_trigger_phrase)
+        config.set("settings", "credential_path", credentials_path)
+
+        config.add_section("sound")
+        config.set("sound", "waiting_for_trigger_sound", waiting_for_trigger_sound)
+        config.set("sound", "trigger_detect_sound", trigger_detected_sound)
+        config.set("sound", "quit_sound", quit_sound)
+
+        config.add_section("vosk")
+        config.set("vosk", "model_path", model_path)
+        config.add_section("proxy")
+        config.set("proxy", "http", http_proxy)
+        config.set("proxy", "https", https_proxy)
+
+        with open(CONFIG_FILE, 'w') as configfile:
+            config.write(configfile)
 
     with open(credentials_path, 'r') as json_file:
         json_data = json.load(json_file)
         openai_key = json_data["openai_api"]
 
     if not os.path.exists(model_path):
-        logger.error("Model existiert nicht.")
+        logger.error(f"Model {model_path} existiert nicht.")
         sys.exit(1)
 
     model = Model(model_path)
     ask_ai = AskAi(openai_key)
 
     recognizer = KaldiRecognizer(model, SAMPLE_RATE)
-    tts_engine = pyttsx4.init()
+    tts_engine = pyttsx3.init()
     voice = tts_engine.getProperty("voices")
 
     tts_engine.setProperty('rate', 150)
@@ -225,5 +261,6 @@ def main() -> None:
     play_wav(quit_sound)
 
 
-if __name__ == "__main":
+if __name__ == "__main__":
+    logger.info(f"{__file__}:{__name__}")
     main()

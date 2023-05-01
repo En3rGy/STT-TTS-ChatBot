@@ -2,6 +2,7 @@ import unittest
 import stt
 import json
 import logging
+import os
 
 from stt import AskAi
 
@@ -12,6 +13,15 @@ class MyTestCase(unittest.TestCase):
         self.logger = logging.getLogger(__name__)
         self.logger.setLevel(logging.DEBUG)
 
+        # Set the proxy configuration
+        http_proxy = ""
+        https_proxy = ""
+
+        os.environ["HTTP_PROXY"] = http_proxy
+        os.environ["HTTPS_PROXY"] = https_proxy
+
+    def test_ask_ai(self):
+        self.logger.info("### test_ask_ai ###")
         with open("../etc/credentials.txt", 'r') as json_file:
             json_data = json.load(json_file)
             key = json_data["openai_api"]
