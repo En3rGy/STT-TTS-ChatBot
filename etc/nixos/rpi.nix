@@ -14,6 +14,7 @@
   boot.loader.raspberryPi.uboot.enable = true;
   boot.loader.raspberryPi.firmwareConfig = ''
     gpu_mem=256
+	dtparam=audio=on
   '';
   environment.systemPackages = with pkgs; [
     libraspberrypi nano python3
@@ -37,12 +38,6 @@
   nix.gc.options = "--delete-older-than 30d";
   boot.cleanTmpDir = true;
 
-  # Configure basic SSH access
-  services.openssh = {
-    enable = true;
-    permitRootLogin = "yes";
-  }
-
   # Use 1GB of additional swap memory in order to not run out of memory
   # when installing lots of things while running other things at the same time.
   swapDevices = [ { device = "/swapfile"; size = 1024; } ];
@@ -50,9 +45,24 @@
   # audio
   sound.enable = true;
   hardware.pulseaudio.enable = true;
+  
+  # users
+  services.openssh = {
+    enable = true;
+    permitRootLogin = "yes";	
+    authorizedKeys = {
+      en3rgy = [
+        "ssh-rsa AAAAB3NzaC1yc2EAAAABJQAAAQEAg2st6LtwRQVQHimkHYOfftw8U9mXz1dMYigN+VvHOhVdrvPxnywB4bciZKJgVuDbzg6eKXiojOuJje3VJKVa1YCL1OCh+ox0udm43OqQeo8FDJhxXzLVDKSOsxAajFBB8WsHb9zOJE0FXkCMK5Ez4UXdQwM31aYkOqMwUt1+CLKGIj/w3SRqQI97ovIuxMQtUoYtSd9tFIl5SjfO3mH68u7ENaBvHxfBJV62vuJJHx8ZZvRQelHJg1K0inGY1hPQqzV2UV7tbQnQHc64ZStoBNprkHkv6WQgq7dEuEXZOkY6TnNkkdXaKKfwYcO6C0t+s0nl0rytQ1Io9+FPmcAcVQ== en3rgy@localhost"
+      ];
+    };
+  };
 
-  boot.loader.raspberryPi.firmwareConfig = ''
-    dtparam=audio=on
-  '';
+  # Ensure the user exists on the system
+  users.users.en3rgy = {
+    isNormalUser = true;
+    home = "/home/en3rgy";
+    description = "En3rGy";
+    extraGroups = ["wheel"]; # Add the user to the 'wheel' group for sudo access, if needed
+  };
 
 }
