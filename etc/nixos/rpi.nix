@@ -19,14 +19,14 @@ let
         pname = "pyttsx3";
         version = "2.90";
 		format = "wheel";
-		src = fetchurl {
-		  url = "https://files.pythonhosted.org/packages/33/9a/de4781245f5ad966646fd276259ef7cfd400ba3cf7d5db7c0d5aab310c20/pyttsx3-2.90-py3-none-any.whl";
-          sha256 = "a585b6d8cffc19bd92db1e0ccbd8aa9c6528dd2baa5a47045d6fed542a44aa19";
-        # src = fetchPypi rec {
-          # inherit pname version format;
+		# src = fetchurl {
+		  # url = "https://files.pythonhosted.org/packages/33/9a/de4781245f5ad966646fd276259ef7cfd400ba3cf7d5db7c0d5aab310c20/pyttsx3-2.90-py3-none-any.whl";
           # sha256 = "a585b6d8cffc19bd92db1e0ccbd8aa9c6528dd2baa5a47045d6fed542a44aa19";
-          # dist = "python";
-		  # python = "py3";
+        src = fetchPypi rec {
+          inherit pname version format;
+          sha256 = "a585b6d8cffc19bd92db1e0ccbd8aa9c6528dd2baa5a47045d6fed542a44aa19";
+          dist = "py3";
+		  python = "py3";
         };
       }
     )
@@ -38,7 +38,7 @@ let
         src = fetchPypi rec {
           inherit pname version format;
           sha256 = "4221f83287eefe5abbe54fc6f1da5774e9e3ffcbbdca1705a466b341093b072e";
-          # dist = "python";
+          dist = "py3";
 		  python = "py3";
         };
       }
