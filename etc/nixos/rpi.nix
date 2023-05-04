@@ -3,10 +3,25 @@
 let
   my-python-packages = ps: with ps; [
     pyaudio
-    pyttsx3
+    
     openai
     vosk
     # other python packages
+    (
+      buildPythonPackage rec {
+        pname = "pyttsx3";
+        version = "2.90";
+        src = fetchPypi {
+          inherit pname version;
+          sha256 = "a585b6d8cffc19bd92db1e0ccbd8aa9c6528dd2baa5a47045d6fed542a44aa19";
+        };
+        doCheck = false;
+        propagatedBuildInputs = [
+          # Specify dependencies
+          # pkgs.python3Packages.numpy
+        ];
+      }
+    )	
   ];  
 in 
 {
@@ -28,7 +43,7 @@ in
   '';
   
   environment.systemPackages = with pkgs; [
-    libraspberrypi nano python3 git
+    libraspberrypi nano python3 git espeak
     (pkgs.python3.withPackages my-python-packages)
   ];
   
