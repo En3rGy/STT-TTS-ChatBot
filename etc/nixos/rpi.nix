@@ -17,7 +17,20 @@
 	dtparam=audio=on
   '';
   environment.systemPackages = with pkgs; [
-    libraspberrypi nano python3
+    libraspberrypi nano python3 git
+  ];
+  
+  let
+    my-python-packages = ps: with ps; [
+      pyaudio
+      pyttsx3
+	  openai
+	  vosk
+      # other python packages
+    ];
+  in
+    environment.systemPackages = [
+    (pkgs.python3.withPackages my-python-packages)
   ];
 
   # File systems configuration for using the installer's partition layout
