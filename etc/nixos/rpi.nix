@@ -26,7 +26,8 @@ let
           inherit pname version format;
           sha256 = "a585b6d8cffc19bd92db1e0ccbd8aa9c6528dd2baa5a47045d6fed542a44aa19";
           dist = "py3";
-		  python = "py3";
+		  abi = "none";
+		  platform = "any";
         };
       }
     )
@@ -38,8 +39,9 @@ let
         src = fetchPypi rec {
           inherit pname version format;
           sha256 = "4221f83287eefe5abbe54fc6f1da5774e9e3ffcbbdca1705a466b341093b072e";
-          dist = "py3";
 		  python = "py3";
+		  abi = "none";
+		  platform = "linux_armv7l";
         };
       }
     )		
