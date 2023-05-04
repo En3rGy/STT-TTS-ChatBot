@@ -1,5 +1,14 @@
 { config, pkgs, lib, ... }:
 {
+  let
+    my-python-packages = ps: with ps; [
+      pyaudio
+      pyttsx3
+	  openai
+	  vosk
+      # other python packages
+    ];
+
   # NixOS wants to enable GRUB by default
   boot.loader.grub.enable = false;
 
@@ -17,19 +26,10 @@
 	dtparam=audio=on
   '';
   
-  let
-    my-python-packages = ps: with ps; [
-      pyaudio
-      pyttsx3
-	  openai
-	  vosk
-      # other python packages
-    ];
-  in
-    environment.systemPackages = with pkgs; [
-      libraspberrypi nano python3 git
-	  (pkgs.python3.withPackages my-python-packages)
-    ];
+  environment.systemPackages = with pkgs; [
+    libraspberrypi nano python3 git
+    (pkgs.python3.withPackages my-python-packages)
+  ];
   
   # File systems configuration for using the installer's partition layout
   fileSystems = {
