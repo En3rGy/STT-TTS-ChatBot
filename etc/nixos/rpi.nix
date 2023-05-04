@@ -16,9 +16,6 @@
     gpu_mem=256
 	dtparam=audio=on
   '';
-  environment.systemPackages = with pkgs; [
-    libraspberrypi nano python3 git
-  ];
   
   let
     my-python-packages = ps: with ps; [
@@ -29,10 +26,11 @@
       # other python packages
     ];
   in
-    environment.systemPackages = [
-    (pkgs.python3.withPackages my-python-packages)
-  ];
-
+    environment.systemPackages = with pkgs; [
+      libraspberrypi nano python3 git
+	  (pkgs.python3.withPackages my-python-packages)
+    ];
+  
   # File systems configuration for using the installer's partition layout
   fileSystems = {
     "/" = {
