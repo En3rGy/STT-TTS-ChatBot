@@ -6,6 +6,16 @@ let
     # other python packages
     (
       buildPythonPackage rec {
+        pname = "requests";
+        version = "2.30.0";
+        src = fetchPypi {
+          inherit pname version;
+          sha256 = "239d7d4458afcb28a692cdd298d87542235f4ca8d36d03a15bfc128a6559a2f4";
+        };
+      }
+    )	
+    (
+      buildPythonPackage rec {
         pname = "aiohttp";
         version = "3.8.4";
         src = fetchPypi {
@@ -22,7 +32,7 @@ let
           inherit pname version;
           sha256 = "63ca9f6ac619daef8c1ddec6d987fe6aa1c87a9bfdce31ff253204d077222375";
         };
-		buildInputs = [ aiohttp ];
+		buildInputs = [ aiohttp requests ];
       }
     )
     (
