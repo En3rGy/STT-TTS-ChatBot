@@ -9,7 +9,7 @@ let
         pname = "pyttsx3";
         version = "2.90";
         src = fetchPypi {
-          inherit pname version;
+          url = "https://files.pythonhosted.org/packages/33/9a/de4781245f5ad966646fd276259ef7cfd400ba3cf7d5db7c0d5aab310c20/pyttsx3-2.90-py3-none-any.whl"
           sha256 = "a585b6d8cffc19bd92db1e0ccbd8aa9c6528dd2baa5a47045d6fed542a44aa19";
         };
       }
@@ -29,7 +29,7 @@ let
         pname = "vosk";
         version = "0.3.45";
         src = fetchPypi {
-          inherit pname version;
+          url = "https://files.pythonhosted.org/packages/32/6d/728d89a4fe8d0573193eb84761b6a55e25690bac91e5bbf30308c7f80051/vosk-0.3.45-py3-none-linux_armv7l.whl"
           sha256 = "4221f83287eefe5abbe54fc6f1da5774e9e3ffcbbdca1705a466b341093b072e";
         };
       }
