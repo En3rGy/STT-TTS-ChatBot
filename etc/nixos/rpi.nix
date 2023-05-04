@@ -7,7 +7,7 @@ let
     (
       buildPythonPackage rec {
         pname = "aiohttp";
-        version = "3.4.8";
+        version = "3.8.4";
         src = fetchPypi {
           inherit pname version;
           sha256 = "bf2e1a9162c1e441bf805a1fd166e249d574ca04e03b34f97e2928769e91ab5c";
