@@ -25,7 +25,7 @@ let
         src = fetchPypi rec {
           inherit pname version format;
           sha256 = "a585b6d8cffc19bd92db1e0ccbd8aa9c6528dd2baa5a47045d6fed542a44aa19";
-          dist = "py3";
+          python = "py3";
 		  abi = "none";
 		  platform = "any";
         };
