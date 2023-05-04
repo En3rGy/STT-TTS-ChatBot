@@ -1,14 +1,15 @@
 { config, pkgs, lib, ... }:
-{
-  let
-    my-python-packages = ps: with ps; [
-      pyaudio
-      pyttsx3
-	  openai
-	  vosk
-      # other python packages
-    ];
 
+let
+  my-python-packages = ps: with ps; [
+    pyaudio
+    pyttsx3
+    openai
+    vosk
+    # other python packages
+  ];  
+in 
+{
   # NixOS wants to enable GRUB by default
   boot.loader.grub.enable = false;
 
