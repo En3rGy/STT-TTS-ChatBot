@@ -3,9 +3,6 @@
 let
   my-python-packages = ps: with ps; [
     pyaudio
-    
-    openai
-    vosk
     # other python packages
     (
       buildPythonPackage rec {
@@ -21,7 +18,37 @@ let
           # pkgs.python3Packages.numpy
         ];
       }
-    )	
+    )
+    (
+      buildPythonPackage rec {
+        pname = "openai";
+        version = "0.27.6";
+        src = fetchPypi {
+          inherit pname version;
+          sha256 = "63ca9f6ac619daef8c1ddec6d987fe6aa1c87a9bfdce31ff253204d077222375";
+        };
+        doCheck = false;
+        propagatedBuildInputs = [
+          # Specify dependencies
+          # pkgs.python3Packages.numpy
+        ];
+      }
+    )
+    (
+      buildPythonPackage rec {
+        pname = "vosk";
+        version = "0.3.45";
+        src = fetchPypi {
+          inherit pname version;
+          sha256 = "4221f83287eefe5abbe54fc6f1da5774e9e3ffcbbdca1705a466b341093b072e";
+        };
+        doCheck = false;
+        propagatedBuildInputs = [
+          # Specify dependencies
+          # pkgs.python3Packages.numpy
+        ];
+      }
+    )		
   ];  
 in 
 {
