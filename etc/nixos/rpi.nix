@@ -6,6 +6,16 @@ let
     # other python packages
     (
       buildPythonPackage rec {
+        pname = "aiohttp";
+        version = "3.4.8";
+        src = fetchPypi {
+          inherit pname version;
+          sha256 = "bf2e1a9162c1e441bf805a1fd166e249d574ca04e03b34f97e2928769e91ab5c";
+        };
+      }
+    )
+    (
+      buildPythonPackage rec {
         pname = "openai";
         version = "0.27.6";
         src = fetchPypi {
