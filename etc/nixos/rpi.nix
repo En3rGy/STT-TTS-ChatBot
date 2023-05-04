@@ -22,6 +22,7 @@ let
           inherit pname version;
           sha256 = "63ca9f6ac619daef8c1ddec6d987fe6aa1c87a9bfdce31ff253204d077222375";
         };
+		buildInputs = [ aiohttp ];
       }
     )
     (
