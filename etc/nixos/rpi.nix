@@ -12,11 +12,6 @@ let
           inherit pname version;
           sha256 = "a585b6d8cffc19bd92db1e0ccbd8aa9c6528dd2baa5a47045d6fed542a44aa19";
         };
-        doCheck = false;
-        propagatedBuildInputs = [
-          # Specify dependencies
-          # pkgs.python3Packages.numpy
-        ];
       }
     )
     (
@@ -27,11 +22,6 @@ let
           inherit pname version;
           sha256 = "63ca9f6ac619daef8c1ddec6d987fe6aa1c87a9bfdce31ff253204d077222375";
         };
-        doCheck = false;
-        propagatedBuildInputs = [
-          # Specify dependencies
-          # pkgs.python3Packages.numpy
-        ];
       }
     )
     (
@@ -42,11 +32,6 @@ let
           inherit pname version;
           sha256 = "4221f83287eefe5abbe54fc6f1da5774e9e3ffcbbdca1705a466b341093b072e";
         };
-        doCheck = false;
-        propagatedBuildInputs = [
-          # Specify dependencies
-          # pkgs.python3Packages.numpy
-        ];
       }
     )		
   ];  
