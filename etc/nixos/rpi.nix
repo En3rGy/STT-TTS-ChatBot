@@ -3,7 +3,7 @@
 let
   my-python-packages = ps: with ps; [
     pyaudio
-	opanai
+	openai
 	pyttsx3
     # other python packages
     (
