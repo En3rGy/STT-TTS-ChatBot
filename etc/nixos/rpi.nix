@@ -62,7 +62,7 @@ let
           sha256 = "4221f83287eefe5abbe54fc6f1da5774e9e3ffcbbdca1705a466b341093b072e";
 		  python = "py3";
 		  abi = "none";
-		  platform = "linux_armv7l";
+		  platform = "manylinux_2_12_x86_64.manylinux2010_x86_64";
         };
       }
     )		
