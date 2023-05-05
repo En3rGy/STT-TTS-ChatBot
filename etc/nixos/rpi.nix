@@ -28,7 +28,17 @@ let
         };
       }
     )
-
+   (
+      buildPythonPackage rec {
+        pname = "requests";
+        version = "2.30.0";
+        src = fetchPypi {
+          inherit pname version;
+          sha256 = "239d7d4458afcb28a692cdd298d87542235f4ca8d36d03a15bfc128a6559a2f4";
+        };
+		# buildInputs = [ charset-normalizer ];
+      }
+    )	
     (
       buildPythonPackage rec {
         pname = "openai";
@@ -41,6 +51,7 @@ let
           abi = "none";
           platform = "any";
         };
+        buildInputs = [ tqdm requests ];
       }
     )
     (
