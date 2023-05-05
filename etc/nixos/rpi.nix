@@ -13,44 +13,34 @@ let
           sha256 = "34e0a2f9c370eb95597aae63bf85eb5e96826d81e3dcf88b8886012906f509b5";
         };
       }
-    )	
-    # (
-      # buildPythonPackage rec {
-        # pname = "requests";
-        # version = "2.30.0";
-        # src = fetchPypi {
-          # inherit pname version;
-          # sha256 = "239d7d4458afcb28a692cdd298d87542235f4ca8d36d03a15bfc128a6559a2f4";
-        # };
-      # # buildInputs = [ charset-normalizer ];
-      # }
-    # )	
-    # (
-      # buildPythonPackage rec {
-        # pname = "aiohttp";
-        # version = "3.8.4";
-        # src = fetchPypi {
-          # inherit pname version;
-          # sha256 = "bf2e1a9162c1e441bf805a1fd166e249d574ca04e03b34f97e2928769e91ab5c";
-        # };
-      # } 
-    # )
+    )
+    (
+      buildPythonPackage rec {
+        pname = "tqdm";
+        version = "4.65.0";
+        format = "wheel";
+        src = fetchPypi rec {
+          inherit pname version format;
+          sha256 = "c4f53a17fe37e132815abceec022631be8ffe1b9381c2e6e30aa70edc99e9671";
+          python = "py3";
+          abi = "none";
+          platform = "any";
+        };
+      }
+    )
+
     (
       buildPythonPackage rec {
         pname = "openai";
         version = "0.27.6";
-		src = fetchPypi rec {
+        format = "wheel";
+        src = fetchPypi rec {
           inherit pname version format;
           sha256 = "1f07ed06f1cfc6c25126107193726fe4cf476edcc4e1485cd9eb708f068f2606";
-		  python = "py3";
-		  abi = "none";
-		  platform = "any";
-
-        # src = fetchPypi {
-          # inherit pname version;
-          # sha256 = "63ca9f6ac619daef8c1ddec6d987fe6aa1c87a9bfdce31ff253204d077222375";
+          python = "py3";
+          abi = "none";
+          platform = "any";
         };
-		# buildInputs = [ aiohttp requests ];
       }
     )
     (
@@ -71,16 +61,16 @@ let
       buildPythonPackage rec {
         pname = "vosk";
         version = "0.3.45";
-		format = "wheel";
+        format = "wheel";
         src = fetchPypi rec {
           inherit pname version format;
           sha256 = "4221f83287eefe5abbe54fc6f1da5774e9e3ffcbbdca1705a466b341093b072e";
-		  python = "py3";
-		  abi = "none";
-		  platform = "manylinux_2_12_x86_64.manylinux2010_x86_64";
+          python = "py3";
+          abi = "none";
+          platform = "manylinux_2_12_x86_64.manylinux2010_x86_64";
         };
       }
-    )		
+    )
   ];  
 in 
 {
@@ -98,7 +88,7 @@ in
   boot.loader.raspberryPi.uboot.enable = true;
   boot.loader.raspberryPi.firmwareConfig = ''
     gpu_mem=256
-	dtparam=audio=on
+    dtparam=audio=on
   '';
   
   environment.systemPackages = with pkgs; [
@@ -116,8 +106,8 @@ in
 
   time.timeZone = "Europe/Berlin";
   services.timesyncd = {
-	enable = true;
-	servers = [ "pool.ntp.org" ];
+    enable = true;
+    servers = [ "pool.ntp.org" ];
   };
 
   # Preserve space by sacrificing documentation and history
@@ -138,7 +128,7 @@ in
   services.openssh = {
     enable = true;
     permitRootLogin = "yes";	
-	passwordAuthentication = false;
+    passwordAuthentication = false;
   };
 
   # Ensure the user exists on the system
