@@ -14,36 +14,43 @@ let
         };
       }
     )	
-    (
-      buildPythonPackage rec {
-        pname = "requests";
-        version = "2.30.0";
-        src = fetchPypi {
-          inherit pname version;
-          sha256 = "239d7d4458afcb28a692cdd298d87542235f4ca8d36d03a15bfc128a6559a2f4";
-        };
-		buildInputs = [ charset-normalizer ];
-      }
-    )	
-    (
-      buildPythonPackage rec {
-        pname = "aiohttp";
-        version = "3.8.4";
-        src = fetchPypi {
-          inherit pname version;
-          sha256 = "bf2e1a9162c1e441bf805a1fd166e249d574ca04e03b34f97e2928769e91ab5c";
-        };
-      }
-    )
+    # (
+      # buildPythonPackage rec {
+        # pname = "requests";
+        # version = "2.30.0";
+        # src = fetchPypi {
+          # inherit pname version;
+          # sha256 = "239d7d4458afcb28a692cdd298d87542235f4ca8d36d03a15bfc128a6559a2f4";
+        # };
+      # # buildInputs = [ charset-normalizer ];
+      # }
+    # )	
+    # (
+      # buildPythonPackage rec {
+        # pname = "aiohttp";
+        # version = "3.8.4";
+        # src = fetchPypi {
+          # inherit pname version;
+          # sha256 = "bf2e1a9162c1e441bf805a1fd166e249d574ca04e03b34f97e2928769e91ab5c";
+        # };
+      # } 
+    # )
     (
       buildPythonPackage rec {
         pname = "openai";
         version = "0.27.6";
-        src = fetchPypi {
-          inherit pname version;
-          sha256 = "63ca9f6ac619daef8c1ddec6d987fe6aa1c87a9bfdce31ff253204d077222375";
+		src = fetchPypi rec {
+          inherit pname version format;
+          sha256 = "1f07ed06f1cfc6c25126107193726fe4cf476edcc4e1485cd9eb708f068f2606";
+		  python = "py3";
+		  abi = "none";
+		  platform = "any";
+
+        # src = fetchPypi {
+          # inherit pname version;
+          # sha256 = "63ca9f6ac619daef8c1ddec6d987fe6aa1c87a9bfdce31ff253204d077222375";
         };
-		buildInputs = [ aiohttp requests ];
+		# buildInputs = [ aiohttp requests ];
       }
     )
     (
@@ -51,9 +58,6 @@ let
         pname = "pyttsx3";
         version = "2.90";
 		format = "wheel";
-		# src = fetchurl {
-		  # url = "https://files.pythonhosted.org/packages/33/9a/de4781245f5ad966646fd276259ef7cfd400ba3cf7d5db7c0d5aab310c20/pyttsx3-2.90-py3-none-any.whl";
-          # sha256 = "a585b6d8cffc19bd92db1e0ccbd8aa9c6528dd2baa5a47045d6fed542a44aa19";
         src = fetchPypi rec {
           inherit pname version format;
           sha256 = "a585b6d8cffc19bd92db1e0ccbd8aa9c6528dd2baa5a47045d6fed542a44aa19";
