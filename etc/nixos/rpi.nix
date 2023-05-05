@@ -3,81 +3,9 @@
 let
   my-python-packages = ps: with ps; [
     pyaudio
+	opanai
+	pyttsx3
     # other python packages
-    (
-      buildPythonPackage rec {
-        pname = "charset-normalizer";
-        version = "3.1.0";
-        src = fetchPypi {
-          inherit pname version;
-          sha256 = "34e0a2f9c370eb95597aae63bf85eb5e96826d81e3dcf88b8886012906f509b5";
-        };
-      }
-    )
-    (
-      buildPythonPackage rec {
-        pname = "tqdm";
-        version = "4.65.0";
-        format = "wheel";
-        src = fetchPypi rec {
-          inherit pname version format;
-          sha256 = "c4f53a17fe37e132815abceec022631be8ffe1b9381c2e6e30aa70edc99e9671";
-          python = "py3";
-          abi = "none";
-          platform = "any";
-        };
-      }
-    )
-   (
-      buildPythonPackage rec {
-        pname = "requests";
-        version = "2.30.0";
-        src = fetchPypi {
-          inherit pname version;
-          sha256 = "239d7d4458afcb28a692cdd298d87542235f4ca8d36d03a15bfc128a6559a2f4";
-        };
-		# buildInputs = [ charset-normalizer ];
-      }
-    )
-    (
-      buildPythonPackage rec {
-        pname = "aiohttp";
-        version = "3.8.4";
-        src = fetchPypi {
-          inherit pname version;
-          sha256 = "bf2e1a9162c1e441bf805a1fd166e249d574ca04e03b34f97e2928769e91ab5c";
-        };
-      }
-    )	
-    (
-      buildPythonPackage rec {
-        pname = "openai";
-        version = "0.27.6";
-        format = "wheel";
-        src = fetchPypi rec {
-          inherit pname version format;
-          sha256 = "1f07ed06f1cfc6c25126107193726fe4cf476edcc4e1485cd9eb708f068f2606";
-          python = "py3";
-          abi = "none";
-          platform = "any";
-        };
-        buildInputs = [ tqdm requests aiohttp];
-      }
-    )
-    (
-      buildPythonPackage rec {
-        pname = "pyttsx3";
-        version = "2.90";
-		format = "wheel";
-        src = fetchPypi rec {
-          inherit pname version format;
-          sha256 = "a585b6d8cffc19bd92db1e0ccbd8aa9c6528dd2baa5a47045d6fed542a44aa19";
-          python = "py3";
-		  abi = "none";
-		  platform = "any";
-        };
-      }
-    )
     (
       buildPythonPackage rec {
         pname = "vosk";
@@ -92,7 +20,7 @@ let
         };
       }
     )
-  ];  
+  ];
 in 
 {
   # NixOS wants to enable GRUB by default
@@ -150,6 +78,11 @@ in
     enable = true;
     permitRootLogin = "yes";	
     passwordAuthentication = false;
+  };
+  
+  services.xserver = {
+    layout = "de";
+    xkbOptions = "grp:win_space_toggle";
   };
 
   # Ensure the user exists on the system
