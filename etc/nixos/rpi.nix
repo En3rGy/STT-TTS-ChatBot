@@ -6,12 +6,23 @@ let
     # other python packages
     (
       buildPythonPackage rec {
+        pname = "charset-normalizer";
+        version = "3.1.0";
+        src = fetchPypi {
+          inherit pname version;
+          sha256 = "34e0a2f9c370eb95597aae63bf85eb5e96826d81e3dcf88b8886012906f509b5";
+        };
+      }
+    )	
+    (
+      buildPythonPackage rec {
         pname = "requests";
         version = "2.30.0";
         src = fetchPypi {
           inherit pname version;
           sha256 = "239d7d4458afcb28a692cdd298d87542235f4ca8d36d03a15bfc128a6559a2f4";
         };
+		buildInputs = [ charset-normalizer ];
       }
     )	
     (
