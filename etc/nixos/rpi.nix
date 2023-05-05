@@ -6,20 +6,20 @@ let
 	openai
 	pyttsx3
     # other python packages
-    (
-      buildPythonPackage rec {
-        pname = "vosk";
-        version = "0.3.45";
-        format = "wheel";
-        src = fetchPypi rec {
-          inherit pname version format;
-          sha256 = "4221f83287eefe5abbe54fc6f1da5774e9e3ffcbbdca1705a466b341093b072e";
-          python = "py3";
-          abi = "none";
-          platform = "linux_armv7l";
-        };
-      }
-    )
+    #(
+    #  buildPythonPackage rec {
+    #    pname = "vosk";
+    #    version = "0.3.45";
+    #    format = "wheel";
+    #   src = fetchPypi rec {
+    #      inherit pname version format;
+    #      sha256 = "4221f83287eefe5abbe54fc6f1da5774e9e3ffcbbdca1705a466b341093b072e";
+    #      python = "py3";
+    #      abi = "none";
+    #      platform = "linux_armv7l";
+    #    };
+    #  }
+    #)
   ];
 in 
 {
