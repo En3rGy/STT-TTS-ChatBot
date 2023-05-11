@@ -10,7 +10,7 @@ import os
 import pyaudio
 import pyttsx3
 import pyttsx3.driver
-import pyttsx3.drivers.sapi5
+# import pyttsx3.drivers.sapi5
 import openai
 from vosk import Model, KaldiRecognizer
 
