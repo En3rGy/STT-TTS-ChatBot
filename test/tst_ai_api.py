@@ -5,8 +5,6 @@ import logging
 import os
 import pyttsx3
 
-from stt import AskAi
-
 
 class MyTestCase(unittest.TestCase):
     def setUp(self) -> None:
@@ -22,7 +20,7 @@ class MyTestCase(unittest.TestCase):
         os.environ["HTTPS_PROXY"] = https_proxy
 
     def test_ask_ai(self):
-        self.logger.info("### test_ask_ai ###")
+        self.logger.info("\n\n### test_ask_ai ###")
         with open("../etc/credentials.txt", 'r') as json_file:
             json_data = json.load(json_file)
             key = json_data["openai_api"]
@@ -42,7 +40,7 @@ class MyTestCase(unittest.TestCase):
         self.assertTrue("#Ende" in ret)
 
     def test_completion(self):
-        self.logger.info("### test_completion ###")
+        self.logger.info("\n\n### test_completion ###")
         with open("../etc/credentials.txt", 'r') as json_file:
             json_data = json.load(json_file)
             key = json_data["openai_api"]
@@ -54,12 +52,14 @@ class MyTestCase(unittest.TestCase):
         self.assertTrue(ret)
 
     def test_play_wav(self):
-        self.logger.info("### test_play_wav")
+        self.logger.info("\n\n### test_play_wav")
 
         stt.play_wav("../etc/sound/recoSuccess.wav")
         self.assertTrue(True)
 
     def test_tts(self):
+        self.logger.info("\n\n### test_tts")
+        self.logger.info("### test_tts ###")
         tts_engine = pyttsx3.init()
         voice = tts_engine.getProperty("voices")
 
