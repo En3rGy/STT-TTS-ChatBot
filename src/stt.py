@@ -15,6 +15,7 @@ import openai
 from vosk import Model, KaldiRecognizer
 
 import apa102
+from gpiozero import LED
 
 
 def resource_path(relative_path: str) -> str:
@@ -231,51 +232,59 @@ def main() -> None:
 
     play_wav(waiting_for_trigger_sound)
     is_active = True
-    while is_active:
-        if detect_trigger(recognizer, stream, trigger_phrase):
-            leds.set_pixel([n for n in range(12)], 0, 1, 0)
-            leds.show()
 
-            recognizer.Reset()
+    power = LED(5)
+    power.on()
 
-            play_wav(trigger_detected_sound)
-            logger.info("Trigger detected. Listening...")
-
-            while True:
-                leds.set_pixel([n for n in range(12)], 1, 1, 0)
+    try:
+        while is_active:
+            if detect_trigger(recognizer, stream, trigger_phrase):
+                leds.set_pixel([n for n in range(12)], 0, 1, 0)
                 leds.show()
 
-                stt_text = speech_to_text(recognizer, stream)
+                recognizer.Reset()
 
-                if stt_text:
-                    logger.info(f"> {stt_text}")
+                play_wav(trigger_detected_sound)
+                logger.info("Trigger detected. Listening...")
 
-                    if quit_trigger_phrase.lower() in stt_text.lower():
-                        is_active = False
+                while True:
+                    leds.set_pixel([n for n in range(12)], 1, 1, 0)
+                    leds.show()
+
+                    stt_text = speech_to_text(recognizer, stream)
+
+                    if stt_text:
+                        logger.info(f"> {stt_text}")
+
+                        if quit_trigger_phrase.lower() in stt_text.lower():
+                            is_active = False
+                            break
+                        elif stt_text.count(" ") > 2:
+                            leds.set_pixel([n for n in range(12)], 1, 0, 0)
+                            leds.show()
+
+                            ai_reply = ask_ai.ask_ai(stt_text)
+                            logger.info("< {}".format(ai_reply.replace("\n", "")))
+                            tts_engine.say(ai_reply)
+                            tts_engine.runAndWait()
+                    else:
+                        leds.clear_strip()
+
+                        ask_ai.reset_chat()
                         break
-                    elif stt_text.count(" ") > 2:
-                        leds.set_pixel([n for n in range(12)], 1, 0, 0)
-                        leds.show()
 
-                        ai_reply = ask_ai.ask_ai(stt_text)
-                        logger.info("< {}".format(ai_reply.replace("\n", "")))
-                        tts_engine.say(ai_reply)
-                        tts_engine.runAndWait()
-                else:
-                    leds.clear_strip()
+                leds.clear_strip()
+                play_wav(waiting_for_trigger_sound)
 
-                    ask_ai.reset_chat()
-                    break
+        stream.stop_stream()
+        stream.close()
+        audio.terminate()
 
-            leds.clear_strip()
-            play_wav(waiting_for_trigger_sound)
+        logger.info("End.")
+        play_wav(quit_sound)
 
-    stream.stop_stream()
-    stream.close()
-    audio.terminate()
-
-    logger.info("End.")
-    play_wav(quit_sound)
+    finally:
+        power.off()
 
 
 if __name__ == "__main__":
