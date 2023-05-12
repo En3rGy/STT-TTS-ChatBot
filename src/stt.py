@@ -39,8 +39,6 @@ TIMEOUT = 15
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
-leds = apa102.APA102(num_led=12)
-
 
 class AskAi:
     def __init__(self, api_key: str):
@@ -82,6 +80,26 @@ class AskAi:
 
         except openai.OpenAIError as e:
             return str(e)
+
+
+class LedPattern:
+    NUM_LED = 12
+
+    def __init__(self):
+        self.power = LED(5)
+        self.power.on()
+        self.leds = apa102.APA102(num_led=self.NUM_LED)
+
+    def __exit__(self, exc_type, exc_val, exc_tb):
+        self.leds.clear_strip()
+        self.power.off()
+
+    def show_color(self, r, g, b):
+        self.leds.set_pixel([n for n in range(self.NUM_LED)], r, g, b)
+        self.leds.show()
+
+    def clear_strip(self):
+        self.leds.clear_strip()
 
 
 def play_wav(filename):
@@ -170,6 +188,8 @@ def main() -> None:
     Listens for the trigger phrase, then transcribes speech and generates responses using the OpenAI API.
     Return to wait for the trigger phrase, listening and responding until the termination phrase is detected.
     """
+    leds = LedPattern()
+    leds.show_color(1, 0, 0)
 
     config = configparser.ConfigParser()
     config.read(CONFIG_FILE)
@@ -233,14 +253,11 @@ def main() -> None:
     play_wav(waiting_for_trigger_sound)
     is_active = True
 
-    power = LED(5)
-    power.on()
-
+    leds.clear_strip()
     try:
         while is_active:
             if detect_trigger(recognizer, stream, trigger_phrase):
-                leds.set_pixel([n for n in range(12)], 0, 1, 0)
-                leds.show()
+                leds.show_color(0, 1, 0)
 
                 recognizer.Reset()
 
@@ -248,8 +265,7 @@ def main() -> None:
                 logger.info("Trigger detected. Listening...")
 
                 while True:
-                    leds.set_pixel([n for n in range(12)], 1, 1, 0)
-                    leds.show()
+                    leds.show_color(1, 1, 0)
 
                     stt_text = speech_to_text(recognizer, stream)
 
@@ -260,8 +276,7 @@ def main() -> None:
                             is_active = False
                             break
                         elif stt_text.count(" ") > 2:
-                            leds.set_pixel([n for n in range(12)], 1, 0, 0)
-                            leds.show()
+                            leds.show_color(1, 0, 0)
 
                             ai_reply = ask_ai.ask_ai(stt_text)
                             logger.info("< {}".format(ai_reply.replace("\n", "")))
@@ -284,7 +299,7 @@ def main() -> None:
         play_wav(quit_sound)
 
     finally:
-        power.off()
+        pass
 
 
 if __name__ == "__main__":
