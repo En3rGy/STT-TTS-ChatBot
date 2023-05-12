@@ -14,6 +14,8 @@ import pyttsx3.driver
 import openai
 from vosk import Model, KaldiRecognizer
 
+import apa102
+
 
 def resource_path(relative_path: str) -> str:
     try:
@@ -36,6 +38,8 @@ TIMEOUT = 15
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
+leds = apa102.APA102(num_led=12)
+
 
 class AskAi:
     def __init__(self, api_key: str):
@@ -55,6 +59,7 @@ class AskAi:
 
         """
         user_message = {"role": "user", "content": f"Fasse dich kurz: {prompt}"}
+        logger.debug(user_message)
 
         self.msg_history.append(user_message)
 
@@ -228,12 +233,18 @@ def main() -> None:
     is_active = True
     while is_active:
         if detect_trigger(recognizer, stream, trigger_phrase):
+            leds.set_pixel([n for n in range(12)], 0, 1, 0)
+            leds.show()
+
             recognizer.Reset()
 
             play_wav(trigger_detected_sound)
             logger.info("Trigger detected. Listening...")
 
             while True:
+                leds.set_pixel([n for n in range(12)], 1, 1, 0)
+                leds.show()
+
                 stt_text = speech_to_text(recognizer, stream)
 
                 if stt_text:
@@ -243,14 +254,20 @@ def main() -> None:
                         is_active = False
                         break
                     elif stt_text.count(" ") > 2:
+                        leds.set_pixel([n for n in range(12)], 1, 0, 0)
+                        leds.show()
+
                         ai_reply = ask_ai.ask_ai(stt_text)
                         logger.info("< {}".format(ai_reply.replace("\n", "")))
                         tts_engine.say(ai_reply)
                         tts_engine.runAndWait()
                 else:
+                    leds.clear_strip()
+
                     ask_ai.reset_chat()
                     break
 
+            leds.clear_strip()
             play_wav(waiting_for_trigger_sound)
 
     stream.stop_stream()

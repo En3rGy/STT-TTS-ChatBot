@@ -1,9 +1,13 @@
 import unittest
-import stt
 import json
 import logging
 import os
 import pyttsx3
+import sys
+
+sys.path.append("../src")
+
+import stt
 
 
 class MyTestCase(unittest.TestCase):
@@ -28,15 +32,15 @@ class MyTestCase(unittest.TestCase):
         self.ask_ai = stt.AskAi(key)
 
         ret = self.ask_ai.ask_ai("Beende jede Antwort mit '#Ende'.")
-        self.logger.info(ret)
+        self.logger.info(f"AI: {ret}")
         self.assertTrue(ret)
 
         ret = self.ask_ai.ask_ai("Wann und wo lebte Martin Luther?")
-        self.logger.info(ret)
+        self.logger.info(f"AI: {ret}")
         self.assertTrue(ret)
 
         ret = self.ask_ai.ask_ai("Danke das wars")
-        self.logger.info(ret)
+        self.logger.info(f"AI: {ret}")
         self.assertTrue("#Ende" in ret)
 
     def test_completion(self):
