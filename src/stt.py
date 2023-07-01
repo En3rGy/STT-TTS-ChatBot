@@ -250,7 +250,7 @@ def main() -> None:
     Return to wait for the trigger phrase, listening and responding until the termination phrase is detected.
     """
 
-    logger.info("Start...")
+    logger.info("\t\t\t#### Start main ####")
 
     leds = LedPattern()
     leds.show_color(1, 0, 0, 1)
@@ -302,22 +302,19 @@ def main() -> None:
         sys.exit(1)
 
     leds.show_color(1, 0, 0, 2)
-
     model = Model(model_path)
     ask_ai = AskAi(openai_key)
 
     leds.show_color(1, 0, 0, 3)
-
     stt_handler = SttHandler()
 
     leds.show_color(1, 0, 0, 4)
-
     recognizer = KaldiRecognizer(model, SAMPLE_RATE_IN)
     tts_engine = pyttsx3.init()
     voices = tts_engine.getProperty("voices")
     voice_id = 0
     for voice in voices:
-        logger.debug(voice)
+        logger.debug("Id: {}, name: {}, complete: {}".format(voice.id, voice.name, voice))
         if "german-mbrola-5" in voice.name:
             voice_id = voice.id
 
@@ -325,7 +322,6 @@ def main() -> None:
     tts_engine.setProperty('voice', voice_id)
 
     leds.show_color(1, 0, 0, 5)
-
     play_wav(waiting_for_trigger_sound, AUDIO_OUT_IDX)
     is_active = True
 
