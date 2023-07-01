@@ -14,7 +14,9 @@ This repository contains a voice-activated chatbot that utilizes the Vosk and Op
 
 - [vosk](https://pypi.org/project/vosk/)
 - [pyaudio](https://pypi.org/project/PyAudio/)
+  - `sudo apt-get install portaudio19-dev python3-pyaudio`
 - [pyttsx3](https://pypi.org/project/pyttsx3/)
+  - `sudo apt-get install espeak`
 - [openai](https://pypi.org/project/openai/)
 
 ## Installation
