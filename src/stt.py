@@ -355,6 +355,7 @@ def main() -> None:
                             ai_reply = ask_ai.ask_ai(stt_text)
                             logger.info("< {}".format(ai_reply.replace("\n", "")))
                             tts_engine.say(ai_reply)
+                            # tts_engine.save_to_file(ai_reply, 'output_audio.mp3')
                             tts_engine.runAndWait()
                     else:
                         leds.clear_strip()
